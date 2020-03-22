@@ -1,0 +1,48 @@
+version: '3.6'
+
+services:
+  vault:
+    build:
+      context: ./vault
+      dockerfile: Dockerfile
+    ports:
+      - 8200:8200
+    environment:
+      - VAULT_ADDR=https://127.0.0.1:8200
+      - VAULT_ADMIN_USERNAME=${VAULT_ADMIN_USERNAME}
+      - VAULT_ADMIN_PASSWORD=${VAULT_ADMIN_PASSWORD}
+      - VAULT_SKIP_VERIFY=true
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
+    command: server -config=/vault/config/vault-config.json
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul
+
+  consul:
+    build:
+      context: ./consul
+      dockerfile: Dockerfile
+    ports:
+      - 8500:8500
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/config.json
+
+  consul-worker:
+    build:
+      context: ./consul
+      dockerfile: Dockerfile
+    command: agent -server -join consul -config-file=/consul/config/config.json
+    depends_on:
+      - consul
+
+  cassandra:
+    build:
+      context: ./cassandra
+      dockerfile: Dockerfile
+    ports:
+      - 9042:9042
+    environment:
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
+      - DEFAULT_CASSANDRA_PASSWORD=${DEFAULT_CASSANDRA_PASSWORD}

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: client1
+  cloud:
+    vault:
+      uri: https://localhost:8200
+      connection-timeout: 50000
+      read-timeout: 50000
+      authentication: token
+      token: ${VAULT_TOKEN}
+
+      cassandra:
+        enabled: true
+        role: ${CASSANDRA_ROLE}
+        backend: database
+        username-property: spring.data.cassandra.username
+        password-property: spring.data.cassandra.password

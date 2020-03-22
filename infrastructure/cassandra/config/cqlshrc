@@ -1,0 +1,3 @@
+[ssl]
+certfile = /opt/ssl/ca.cer.pem
+validate = true

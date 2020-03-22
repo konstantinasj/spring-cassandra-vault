@@ -1,0 +1,4 @@
+name: cassandra
+title: Cassandra baseline tests
+license: Apache-2.0
+version: 1.0.0
